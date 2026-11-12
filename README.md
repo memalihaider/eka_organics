@@ -39,13 +39,41 @@ public/img/                    Logo files extracted from the brand artwork
 _prototype/                    Original static HTML version (reference only; safe to delete)
 ```
 
-## Brand palette (sampled from the logo)
-`#3D2F26` espresso · `#48372D` cocoa · `#78665A` taupe · `#C9B39B` gold · `#EADFD2` champagne · `#F5EFE7` ivory · `#FBF8F3` cream
-Type: Cormorant Garamond (display) and Jost (UI), self-hosted through `next/font`.
+## Brand direction
+| | |
+|---|---|
+| Voice | Calm, confident, warm and knowledgeable. Never fear-based, never "quick fix" |
+| Story | Traditional inspiration, modern formulation, transparent ingredients |
+| Hero product | **Nabhi Ritual Oil**: designed for women 40+, low-fragrance, no camphor, in a 30 ml amber glass dropper with copper accents |
+| Pricing | Products sell at MRP. No strike-through prices, "% off" tags or "save" language. The newsletter welcome gift (code `WELCOME`) is complimentary shipping |
+| Proof points | Controlled by `CLAIMS` in `src/lib/data.ts`. A claim only appears on the site when its flag is `true` |
+
+**Palette:** the logo browns (`#3D2F26` espresso, `#48372D` cocoa, `#78665A` taupe) plus deep saffron `#A8641F` (`#D9A25F` on dark backgrounds), sage `#7F8C6F` / `#DCDDCC`, terracotta `#9A5940`, copper `#B07A4F`, warm ivory `#F5EFE7` and cream `#FBF8F3`.
+**Type:** Cormorant Garamond for headlines and Jost for body text, self-hosted through `next/font`.
+
+### Claims guardrail (cosmetic language only)
+Under CDSCO rules, cosmetics may only claim to cleanse, beautify or alter appearance. **Never** use: cure, treat, heal, balance hormones, regulate periods, boost metabolism, burn fat, detox, relieve acidity, bloating or improve sleep. The checker also blocks itch, rash, stretch marks, hair fall and weight loss.
+**Use instead:** nourish, soften, condition, soothe, calm the senses, support a ritual, care for skin.
+
+`npm run check:claims` scans `src/` for this wording. It also runs automatically before every `npm run build`, so a build fails if banned wording is found. Add new terms to `BANNED` in `scripts/check-claims.mjs`.
+
+### Nabhi Ritual Oil formula
+The formula comes from the brand ingredient sheet: sesame, sweet almond, fractionated coconut (caprylic/capric triglyceride), castor, turmeric CO₂, ashwagandha, shatavari, licorice, lavender and frankincense (*Boswellia serrata*), vitamin E and rosemary CO₂.
+- The product page lists every ingredient with its INCI name and its role. Percentages are not shown.
+- The copy says **"no added camphor"**, not "no camphor", because lavender and rosemary can contain natural traces.
+
+### Verified claims (`CLAIMS` in data.ts)
+| Flag | Default | Turn on only when you hold |
+|---|---|---|
+| `gmp` | `true` | The manufacturer's GMP certificate. **Verify before launch** |
+| `dermatologistTested` | `true` | A dermatologist test report and patch-test protocol. **Verify before launch** |
+| `crueltyFree` | `false` | Certification such as PETA or Leaping Bunny |
+| `organicCertified` | `false` | An organic certificate (NPOP or COSMOS). Until then, ingredient lists say "From organic farming" |
 
 ## Conversion & SEO features
-- Free-shipping (₹999) and free-gift (₹1,499) progress meter, cart upsells, "pairs with" suggestions, gift sets that show the saving
-- Coupons (`EKAFIRST10`, `MAMA200`), welcome popup that captures emails for 10% off, footer newsletter signup
+- Progress meter for complimentary shipping (₹999) and two ritual miniatures (₹1,499), plus cart upsells and "pairs with" suggestions
+- Welcome popup and newsletter that offer the Ritual Guide and complimentary first shipping (`WELCOME`). The code field stays hidden behind "Have a gift or welcome code?"
+- A "Find your ritual" quiz with a Women 40+ path, and product-level FAQs with FAQ structured data for Google
 - PIN-code delivery estimate with COD eligibility, and city/state autofill at checkout
 - UPI-first, distraction-free checkout with inline validation, plus server-side validation and re-pricing
 - Sticky add-to-cart bar, quick view, search, and a "Find your ritual" quiz that adds a whole routine to the bag in one click

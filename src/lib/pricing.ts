@@ -35,15 +35,16 @@ export function computeTotals(cart: CartLine[], coupon: string | null, pay: PayM
     if (!v) continue;
     sub += v.price * l.q; mrp += v.mrp * l.q; count += l.q;
   }
-  let disc = 0, couponErr = "";
+  let disc = 0, couponErr = "", freeShip = false;
   if (coupon) {
     const c = CONFIG.coupons[coupon];
     if (!c) couponErr = "This code isn't valid.";
     else if (c.min && sub < c.min) couponErr = `Add ₹${(c.min - sub).toLocaleString("en-IN")} more to use ${coupon}.`;
+    else if (c.type === "freeship") freeShip = true;
     else disc = c.type === "pct" ? Math.round((sub * c.value) / 100) : c.value;
   }
   const after = sub - disc;
-  const ship = count === 0 || after >= CONFIG.freeShippingAt ? 0 : CONFIG.shippingFee;
+  const ship = count === 0 || freeShip || after >= CONFIG.freeShippingAt ? 0 : CONFIG.shippingFee;
   const cod = pay === "cod" && count > 0 ? CONFIG.codFee : 0;
   return { sub, mrp, count, disc, couponErr, after, ship, cod, total: after + ship + cod, gift: after >= CONFIG.giftAt };
 }

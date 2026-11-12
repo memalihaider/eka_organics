@@ -24,6 +24,8 @@ function Label({ x, y, w, h, a }: { x: number; y: number; w: number; h: number; 
       <line x1={cx - 16} x2={cx + 16} y1={base + 7} y2={base + 7} stroke={INK} strokeOpacity={0.35} strokeWidth={0.6} />
       <text x={cx} y={base + 22} textAnchor="middle" fontFamily={SERIF} fontStyle="italic" fontSize={Math.max(11, w / 7.2)} fill={INK}>{a.short}</text>
       <text x={cx} y={base + 34} textAnchor="middle" fontFamily={SANS} fontSize={5.6} letterSpacing={1.6} fill={INK} fillOpacity={0.7}>{a.kind.toUpperCase()}</text>
+      {a.size && <text x={cx} y={y + h - 9} textAnchor="middle" fontFamily={SANS} fontSize={5} letterSpacing={1.4} fill={INK} fillOpacity={0.55}>{a.size.toUpperCase()}</text>}
+      {a.collar && <rect x={x + 3} y={y + 3} width={w - 6} height={h - 6} rx={2} fill="none" stroke={a.collar} strokeOpacity={0.7} strokeWidth={0.6} />}
     </g>
   );
 }
@@ -36,7 +38,7 @@ function Shape({ a, id }: { a: A; id: string }) {
         <ellipse cx={150} cy={326} rx={78} ry={9} fill={shadow} />
         <rect x={137} y={46} width={26} height={54} rx={13} fill={a.cap} />
         <rect x={141} y={52} width={5} height={40} rx={2.5} fill="#fff" opacity={0.12} />
-        <rect x={124} y={98} width={52} height={30} rx={3} fill="#C9B39B" />
+        <rect x={124} y={98} width={52} height={30} rx={3} fill={a.collar ?? "#C9B39B"} />
         <rect x={124} y={98} width={52} height={30} rx={3} fill={sheen} />
         <path d="M108 140 Q108 128 122 128 H178 Q192 128 192 140 L196 160 V310 Q196 322 184 322 H116 Q104 322 104 310 V160 Z" fill={glass} />
         <rect x={112} y={150} width={9} height={160} rx={4.5} fill="#fff" opacity={0.18} />

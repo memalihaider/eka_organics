@@ -1,12 +1,13 @@
 /* Small shared server-rendered sections */
-import { CONFIG, type StageKey } from "@/lib/data";
+import { PROOF_POINTS, type StageKey } from "@/lib/data";
 import { TRUST_ICONS } from "./Icons";
 
+/** Proof points — only claims flagged as verified in data.ts (CLAIMS) appear. */
 export function TrustBar() {
   return (
     <section className="trustbar">
       <div className="container trustbar__grid">
-        {CONFIG.trust.map((t) => {
+        {PROOF_POINTS.map((t) => {
           const Icon = TRUST_ICONS[t.icon];
           return <div className="trust" key={t.title}><Icon /><div><b>{t.title}</b><span>{t.text}</span></div></div>;
         })}

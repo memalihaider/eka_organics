@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PRODUCT_MAP, STAGES } from "@/lib/data";
-import { inr, pctOff } from "@/lib/format";
+import { inr } from "@/lib/format";
 import ProductArt from "../ProductArt";
 import { Close } from "../Icons";
 import { storage, useStore } from "./StoreProvider";
@@ -12,22 +12,25 @@ import { storage, useStore } from "./StoreProvider";
 /* ---------------------------------------------------------------- Quiz */
 type Opt = [key: string, title: string, sub: string];
 const STAGE_OPTS: Opt[] = [
+  ["mid", "40 and beyond", "A calming ritual for mature skin"],
   ["preg1", "Expecting · First trimester", "Weeks 1–12"], ["preg2", "Expecting · 2nd or 3rd trimester", "Weeks 13–40"],
   ["post", "Newly postpartum", "The first 3 months"], ["baby", "Caring for my little one", "Newborn to 3 years"],
 ];
 const NEEDS: Record<string, Opt[]> = {
-  preg1: [["prevent", "Preparing skin early", "Gentle, daily nourishment"], ["dry", "Dry, itchy skin", "Comfort for changing skin"]],
-  preg2: [["marks", "Stretch-mark care", "Elasticity & suppleness"], ["dry", "Tight, itchy belly", "Deep overnight comfort"]],
-  post: [["recovery", "Body recovery & aches", "Traditional Sutika care"], ["hair", "Postpartum hair fall", "Scalp nourishment"], ["nursing", "Nursing comfort", "Sore, dry skin"], ["marks", "Fading stretch marks", "Continued belly care"]],
+  mid: [["winddown", "Winding down at night", "A deliberate pause before sleep"], ["dryabd", "Dry abdominal skin", "Gentle, non-sticky nourishment"], ["sensitive", "A low-fragrance routine", "Soft aroma, no added camphor"], ["hairmid", "Scalp & hair care", "A nourishing weekly oiling"]],
+  preg1: [["prevent", "Preparing skin early", "Gentle, daily nourishment"], ["dry", "Dry, tight-feeling skin", "Comfort for changing skin"]],
+  preg2: [["marks", "Soft, supple skin", "As your belly grows"], ["dry", "Tight-feeling belly skin", "Deep overnight nourishment"]],
+  post: [["recovery", "The forty-day ritual", "Warming Sutika massage"], ["hair", "Scalp & hair care", "A nourishing scalp oiling"], ["nursing", "Nursing comfort", "Dry, delicate skin"], ["marks", "Continued belly care", "Soft, nourished skin"]],
   baby: [["malish", "Daily malish", "Massage & bonding"], ["nappy", "Nappy area & dry patches", "Calm, protected skin"], ["bath", "Gentle, soap-free bath", "For 6 months+"]],
 };
 const GIFT_OPTS: Opt[] = [["me", "For me", "Building my own ritual"], ["gift", "A gift", "Baby shower or new-mother gift"]];
 const REC: Record<string, string[]> = {
+  winddown: ["nabhi-ritual-oil"], dryabd: ["nabhi-ritual-oil", "velvet-belly-butter"], sensitive: ["nabhi-ritual-oil"], hairmid: ["nabhi-ritual-oil", "mama-hair-elixir"],
   prevent: ["bloom-belly-oil"], dry: ["velvet-belly-butter", "bloom-belly-oil"], marks: ["bloom-belly-oil", "velvet-belly-butter"],
   recovery: ["sutika-postpartum-oil", "nurture-nursing-balm"], hair: ["mama-hair-elixir", "sutika-postpartum-oil"], nursing: ["nurture-nursing-balm", "sutika-postpartum-oil"],
   malish: ["malish-baby-oil", "soothe-baby-balm"], nappy: ["soothe-baby-balm", "malish-baby-oil"], bath: ["baby-ubtan", "malish-baby-oil"],
 };
-const GIFT_SET: Record<string, string> = { preg1: "nine-month-ritual", preg2: "nine-month-ritual", post: "welcome-home-hamper", baby: "first-malish-kit" };
+const GIFT_SET: Record<string, string> = { mid: "nabhi-ritual-oil", preg1: "nine-month-ritual", preg2: "nine-month-ritual", post: "welcome-home-hamper", baby: "first-malish-kit" };
 
 function Quiz() {
   const { add, openModal } = useStore();
@@ -42,7 +45,7 @@ function Quiz() {
   if (step >= steps.length) {
     const [stage, need, gift] = ans;
     let ids = REC[need] ?? ["bloom-belly-oil"];
-    if (gift === "gift") ids = [GIFT_SET[stage], ids[0]];
+    if (gift === "gift") ids = [...new Set([GIFT_SET[stage], ids[0]])];
     const ps = ids.map((i) => PRODUCT_MAP[i]);
     const total = ps.reduce((s, p) => s + p.variants[0].price, 0);
     return (
@@ -92,7 +95,7 @@ function QuickView({ id }: { id: string }) {
         <p style={{ color: "var(--muted)" }}>{p.sub}</p>
         <div style={{ display: "flex", gap: 10, alignItems: "baseline", margin: "18px 0" }}>
           <b style={{ fontFamily: "var(--serif)", fontSize: 30, fontWeight: 500 }}>{inr(v.price)}</b>
-          {v.mrp > v.price && <><s style={{ color: "var(--muted)" }}>{inr(v.mrp)}</s><span style={{ color: "var(--ok)", fontSize: 13 }}>{pctOff(v)}% off</span></>}
+          <span style={{ color: "var(--muted)", fontSize: 13 }}>{v.size} · MRP incl. of all taxes</span>
         </div>
         <ul style={{ paddingLeft: 18, color: "var(--muted)", fontSize: 14, margin: "0 0 24px" }}>{p.benefits.slice(0, 3).map((b) => <li key={b}>{b}</li>)}</ul>
         {p.variants.length > 1 && (
@@ -116,15 +119,15 @@ function Welcome() {
       <div className="pop__media" />
       <div className="pop__copy">
         <p className="eyebrow">— Welcome to Eka —</p>
-        <h3 className="h-md">Enjoy <b>10% off</b> your first ritual</h3>
-        <p style={{ color: "var(--muted)" }}>Join the Eka Circle for trimester guides, postpartum wisdom and early access to new rituals.</p>
+        <h3 className="h-md">Join <b>the Eka Circle</b></h3>
+        <p style={{ color: "var(--muted)" }}>Receive our Ritual Guide — gentle Ayurvedic practices for every chapter — and complimentary shipping on your first order.</p>
         {done ? (
-          <><div className="code-box">EKAFIRST10</div><p style={{ fontSize: 13, color: "var(--muted)", marginTop: 10, textAlign: "center" }}>Applied to your bag automatically.</p></>
+          <><div className="code-box">WELCOME</div><p style={{ fontSize: 13, color: "var(--muted)", marginTop: 10, textAlign: "center" }}>Complimentary shipping is applied to your bag. Your guide is on its way.</p></>
         ) : (
           // TODO: POST the email to your ESP (Klaviyo / Mailchimp) here
-          <form onSubmit={(e) => { e.preventDefault(); setDone(true); applyCoupon("EKAFIRST10"); }}>
+          <form onSubmit={(e) => { e.preventDefault(); setDone(true); applyCoupon("WELCOME"); }}>
             <input type="email" required placeholder="Your email address" aria-label="Email" />
-            <button className="btn">Unlock 10% off</button>
+            <button className="btn">Send me the guide</button>
           </form>
         )}
         <button className="no" onClick={() => openModal(null)}>{done ? "Continue shopping" : "No thanks"}</button>
@@ -179,9 +182,16 @@ export function Toast() {
 export function Reveal() {
   const pathname = usePathname();
   useEffect(() => {
+    // Content is visible by default (no-JS, crawlers, link previews). The fade-in
+    // only activates once JS runs; anything already on screen is marked visible
+    // first so nothing flickers.
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
-    const scan = () => document.querySelectorAll<HTMLElement>(".rv:not(.in)").forEach((el, i) => { el.style.transitionDelay = `${(i % 4) * 70}ms`; io.observe(el); });
+    const scan = () => document.querySelectorAll<HTMLElement>(".rv:not(.in)").forEach((el, i) => {
+      if (el.getBoundingClientRect().top < innerHeight) { el.classList.add("in"); return; }
+      el.style.transitionDelay = `${(i % 4) * 70}ms`; io.observe(el);
+    });
     scan();
+    document.documentElement.classList.add("reveal-ready");
     const mo = new MutationObserver(scan);
     mo.observe(document.body, { childList: true, subtree: true });
     return () => { io.disconnect(); mo.disconnect(); };

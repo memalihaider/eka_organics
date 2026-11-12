@@ -30,7 +30,7 @@ const PAY_OPTS: { key: PayMethod; label: string; small: string; body: React.Reac
   { key: "upi", label: "UPI", small: "GPay · PhonePe · Paytm · BHIM", body: <>Pay instantly with any UPI app — you&apos;ll approve the request on your phone.<div className="upi-apps"><span>Google Pay</span><span>PhonePe</span><span>Paytm</span><span>BHIM</span></div></> },
   { key: "card", label: "Credit / Debit card", small: "Visa · Mastercard · RuPay", body: "You'll enter card details on our secure payment partner's page. EMI available above ₹3,000." },
   { key: "nb", label: "NetBanking & Wallets", small: "All major banks", body: "Choose your bank on the next screen." },
-  { key: "cod", label: "Cash on Delivery", small: `+${inr(CONFIG.codFee)}`, body: `Pay in cash or UPI when your parcel arrives. Save ${inr(CONFIG.codFee)} by paying online now.` },
+  { key: "cod", label: "Cash on Delivery", small: `+${inr(CONFIG.codFee)}`, body: `Pay in cash or UPI when your parcel arrives. A ${inr(CONFIG.codFee)} handling fee applies.` },
 ];
 
 function Field({ name, label, value, error, onChange, className = "", ref, ...rest }: {
@@ -179,15 +179,15 @@ export default function CheckoutForm() {
         <CouponForm compact />
         <div className="totals">
           <div><span>Subtotal</span><span>{inr(t.sub)}</span></div>
-          {t.disc > 0 && <div className="save"><span>Coupon ({coupon})</span><span>−{inr(t.disc)}</span></div>}
-          <div><span>Shipping</span><span>{t.ship ? inr(t.ship) : "Free"}</span></div>
+          {t.disc > 0 && <div><span>Code ({coupon})</span><span>−{inr(t.disc)}</span></div>}
+          <div><span>Shipping</span><span>{t.ship ? inr(t.ship) : "Complimentary"}</span></div>
           {t.cod > 0 && <div><span>COD handling</span><span>{inr(t.cod)}</span></div>}
           <div className="grand"><span>Total</span><span>{inr(t.total)}</span></div>
-          {t.mrp - t.sub + t.disc > 0 && <div className="save" style={{ justifyContent: "flex-end", fontSize: 12.5 }}>You&apos;re saving {inr(t.mrp - t.sub + t.disc)} on this order</div>}
+          <div style={{ justifyContent: "flex-end", fontSize: 12, color: "var(--muted)" }}>MRP, inclusive of all taxes</div>
         </div>
-        {t.after < CONFIG.freeShippingAt && <p className="coupon-msg" style={{ marginTop: 10 }}>Add {inr(CONFIG.freeShippingAt - t.after)} more for free shipping. <Link href="/shop" style={{ textDecoration: "underline" }}>Continue shopping</Link></p>}
+        {t.ship > 0 && <p className="coupon-msg" style={{ marginTop: 10, color: "var(--muted)" }}>Complimentary shipping on orders above ₹{CONFIG.freeShippingAt}.</p>}
         <div className="mini-trust" style={{ marginTop: 28 }}>
-          <div><Truck />Dispatched<br />in 24 hrs</div><div><Return />Easy 7-day<br />returns</div><div><Leaf />Certified<br />organic</div><div><Lock style={{ strokeWidth: 1 }} />Secure<br />payments</div>
+          <div><Truck />Dispatched<br />in 24 hrs</div><div><Return />Easy 7-day<br />returns</div><div><Leaf />Traceable<br />sourcing</div><div><Lock style={{ strokeWidth: 1 }} />Secure<br />payments</div>
         </div>
       </div></aside>
     </div>

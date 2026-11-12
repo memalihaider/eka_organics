@@ -9,8 +9,8 @@ const sans = Jost({ subsets: ["latin"], weight: ["300", "400", "500", "600"], va
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: { default: "Eka Organics — Ayurvedic Rituals for Mother & Baby", template: "%s — Eka Organics" },
-  description: "Pregnancy-safe belly oils, postpartum rituals and gentle baby care, rooted in Ayurveda. Free Pan-India shipping over ₹999. COD available.",
+  title: { default: "Eka Organics — Ayurvedic Rituals for Every Chapter", template: "%s — Eka Organics" },
+  description: "Nabhi Ritual Oil for women 40+, belly oils, postpartum rituals and gentle baby care. Traditional inspiration, modern formulation, transparent ingredients.",
   icons: { icon: "/img/icon.png", apple: "/img/icon.png" },
   openGraph: { siteName: "Eka Organics", images: ["/img/brand-taupe.png"], locale: "en_IN", type: "website" },
 };

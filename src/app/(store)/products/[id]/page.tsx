@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CONFIG, PAIRS, PRODUCTS, PRODUCT_MAP, STAGES, getProduct } from "@/lib/data";
 import ProductCard, { Rating } from "@/components/ProductCard";
+import { FaqList } from "@/components/Sections";
 import Gallery from "./Gallery";
 import BuyBox from "./BuyBox";
 
@@ -28,18 +29,25 @@ export default async function ProductPage({ params }: { params: Params }) {
   const related = PRODUCTS.filter((x) => x.id !== id && (x.stage === p.stage || p.includes?.includes(x.id))).slice(0, 4);
   const pair = PAIRS[id] ? PRODUCT_MAP[PAIRS[id]] : undefined;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: p.name,
-    description: p.sub,
-    brand: { "@type": "Brand", name: "Eka Organics" },
-    offers: p.variants.map((v) => ({ "@type": "Offer", name: v.size, price: v.price, priceCurrency: "INR", availability: "https://schema.org/InStock" })),
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: p.name,
+      description: p.sub,
+      brand: { "@type": "Brand", name: "Eka Organics" },
+      offers: p.variants.map((v) => ({ "@type": "Offer", name: v.size, price: v.price, priceCurrency: "INR", availability: "https://schema.org/InStock" })),
+    },
+    ...(p.faq ? [{
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: p.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    }] : []),
+  ];
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="container">
         <div className="crumbs" style={{ paddingTop: 28 }}>
           <Link href="/">Home</Link> / <Link href={`/shop?stage=${p.stage}`}>{STAGES[p.stage].name}</Link> / {p.name}
@@ -56,7 +64,9 @@ export default async function ProductPage({ params }: { params: Params }) {
             <BuyBox p={p} pair={pair} />
 
             <div className="acc" style={{ marginTop: 30 }}>
-              <details open><summary>Why you&apos;ll love it</summary><div className="acc__body"><ul>{p.benefits.map((b) => <li key={b}>{b}</li>)}</ul></div></details>
+              <details open><summary>Why you&apos;ll love it</summary><div className="acc__body"><ul>
+                {p.highlights ? p.highlights.map((h) => <li key={h.title}><b>{h.title}</b> — {h.text}</li>) : p.benefits.map((b) => <li key={b}>{b}</li>)}
+              </ul></div></details>
               {isSet && (
                 <details open><summary>What&apos;s inside</summary><div className="acc__body"><ul>
                   {p.includes!.map((i) => <li key={i}><Link href={`/products/${i}`} style={{ textDecoration: "underline" }}>{PRODUCT_MAP[i].name}</Link> — {PRODUCT_MAP[i].variants[0].size}</li>)}
@@ -70,11 +80,29 @@ export default async function ProductPage({ params }: { params: Params }) {
               <details><summary>The ritual</summary><div className="acc__body">{p.ritual}</div></details>
               <details><summary>Full ingredients</summary><div className="acc__body">{p.inci}</div></details>
               <details><summary>Safety &amp; care</summary><div className="acc__body">{p.safety}</div></details>
+              {p.packaging && <details><summary>Packaging</summary><div className="acc__body">{p.packaging}</div></details>}
               <details><summary>Shipping &amp; returns</summary><div className="acc__body">Dispatched within 24 hours from our studio. Metro cities 1–3 working days, rest of India 3–6. COD available on most PIN codes (₹{CONFIG.codFee} fee). Unopened products may be returned within 7 days.</div></details>
             </div>
           </div>
         </div>
       </div>
+      {p.ingredients && (
+        <section className="section" style={{ paddingTop: 0 }}><div className="container">
+          <div className="sec-head"><div><p className="eyebrow">— Fully disclosed formula —</p><h2 className="h-lg">What&apos;s inside, <em>and why</em></h2></div></div>
+          <div className="ing-table" role="table" aria-label={`${p.name} ingredients`}>
+            <div className="ing-row ing-row--head" role="row"><span role="columnheader">Ingredient</span><span role="columnheader">INCI name</span><span role="columnheader">Its role</span></div>
+            {p.ingredients.map((i) => (
+              <div className="ing-row" role="row" key={i.inci}><b role="cell">{i.name}</b><span role="cell">{i.inci}</span><span role="cell">{i.role}</span></div>
+            ))}
+          </div>
+        </div></section>
+      )}
+      {p.faq && (
+        <section className="section" style={{ paddingTop: 0 }}><div className="container faq-wrap">
+          <div><p className="eyebrow">— Questions, answered —</p><h2 className="h-lg" style={{ marginTop: 12 }}>About <em>{p.name}</em></h2></div>
+          <div className="acc"><FaqList items={p.faq} /></div>
+        </div></section>
+      )}
       <section className="section" style={{ background: "var(--ivory)" }}><div className="container">
         <div className="sec-head"><div><p className="eyebrow">— Complete your ritual —</p><h2 className="h-lg">You may also <em>love</em></h2></div></div>
         <div className="grid">{related.map((r) => <ProductCard key={r.id} p={r} />)}</div>

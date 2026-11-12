@@ -12,6 +12,7 @@ import { useStore } from "../store/StoreProvider";
 
 const NAV = [
   { href: "/shop", label: "Shop All" },
+  { href: "/shop?stage=midlife", label: "Women 40+" },
   { href: "/shop?stage=pregnancy", label: "Pregnancy" },
   { href: "/shop?stage=postpartum", label: "Postpartum" },
   { href: "/shop?stage=baby", label: "Baby" },
@@ -19,9 +20,9 @@ const NAV = [
 ];
 
 const MESSAGES = [
+  <>Introducing <b>Nabhi Ritual Oil</b> — a quiet nightly ritual for women 40+</>,
   <>Complimentary Pan-India shipping on orders above ₹999</>,
   <>Cash on Delivery available · Easy 7-day returns</>,
-  <>First order? Use <b>EKAFIRST10</b> for 10% off</>,
 ];
 
 export function AnnouncementBar() {
@@ -30,7 +31,7 @@ export function AnnouncementBar() {
   return (
     <div className="announce" role="region" aria-label="Offers">
       <div className="announce__track">
-        {MESSAGES.map((m, n) => <span key={n} className={n === i ? "on" : ""} aria-hidden={n !== i}>{m}</span>)}
+        {MESSAGES.map((m, n) => <span key={n} className={n === i ? "on" : ""} aria-hidden={n !== i}><span>{m}</span></span>)}
       </div>
     </div>
   );
@@ -46,7 +47,7 @@ function SearchBar({ onClose }: { onClose: () => void }) {
   return (
     <div className="search">
       <div className="search__inner">
-        <input ref={ref} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search belly oil, baby massage, ubtan…" aria-label="Search products" />
+        <input ref={ref} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search nabhi oil, belly oil, baby massage…" aria-label="Search products" />
         <button className="icon-btn" onClick={onClose} aria-label="Close search"><Close /></button>
       </div>
       {term.length >= 2 && (
@@ -89,7 +90,7 @@ export default function Header() {
           <div className="header__left">
             <button className="icon-btn menu-toggle" onClick={() => openDrawer("menu")} aria-label="Open menu"><Menu /></button>
             <nav className="nav" aria-label="Primary">
-              {NAV.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
+              {NAV.slice(1).map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
             </nav>
           </div>
           <Link href="/" className="logo" aria-label="Eka Organics home">
@@ -114,7 +115,7 @@ export default function Header() {
           <button className="icon-btn" onClick={() => openDrawer(null)} aria-label="Close menu"><Close /></button>
         </div>
         <nav className="mnav">
-          {[...NAV.slice(0, 3), { href: "/shop?stage=baby", label: "Baby & Little Ones" }, NAV[4], { href: "/story", label: "Our Story" }].map((n) => (
+          {[...NAV.slice(0, 4), { href: "/shop?stage=baby", label: "Baby & Little Ones" }, NAV[5], { href: "/story", label: "Our Story" }].map((n) => (
             <Link key={n.label} href={n.href} onClick={() => openDrawer(null)}>{n.label}</Link>
           ))}
           <button onClick={() => openModal({ kind: "quiz" })}>Find Your Ritual →</button>

@@ -13,17 +13,19 @@ export default function Footer() {
           <div>
             <p className="eyebrow eyebrow--light">— The Eka Circle —</p>
             <h3>Gentle rituals, delivered to your inbox</h3>
-            <p>Trimester guides, postpartum care from Ayurvedic tradition, and 10% off your first order.</p>
+            <p>Our Ritual Guide, seasonal practices from Ayurvedic tradition, and complimentary shipping on your first order.</p>
           </div>
           <NewsletterForm />
         </div>
         <div className="footer__grid">
           <div className="footer__brand">
             <Image src="/img/wordmark-light.png" alt="eka organics" width={591} height={387} style={{ height: "auto" }} />
-            <p>Ayurvedic, organic care for the most tender chapters of life — pregnancy, motherhood and your little one&apos;s first years.</p>
+            <p>Traditional inspiration, modern formulation, transparent ingredients — Ayurvedic rituals for every chapter of a woman&apos;s life.</p>
           </div>
           <div>
             <h4>Shop</h4>
+            <Link href="/products/nabhi-ritual-oil">Nabhi Ritual Oil</Link>
+            <Link href="/shop?stage=midlife">Women 40+</Link>
             <Link href="/shop?stage=pregnancy">Pregnancy</Link>
             <Link href="/shop?stage=postpartum">Postpartum</Link>
             <Link href="/shop?stage=baby">Baby &amp; Little Ones</Link>

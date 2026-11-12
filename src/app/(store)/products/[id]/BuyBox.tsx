@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CONFIG, type Product } from "@/lib/data";
-import { inr, pctOff } from "@/lib/format";
+import { CLAIMS, CONFIG, type Product } from "@/lib/data";
+import { inr } from "@/lib/format";
 import { checkPin, type PinResult } from "@/lib/pincode";
 import { MAX_QTY } from "@/lib/pricing";
 import ProductArt from "@/components/ProductArt";
-import { Cash, Return, Shield, Tag, Truck } from "@/components/Icons";
+import { Cash, Gift, List, Moon, Return, Shield, Truck } from "@/components/Icons";
 import { storage, useStore } from "@/components/store/StoreProvider";
 
 function PinChecker() {
@@ -53,15 +53,17 @@ export default function BuyBox({ p, pair }: { p: Product; pair?: Product }) {
   }, []);
   useEffect(() => { document.body.classList.toggle("has-sticky", sticky); }, [sticky]);
 
-  const sizeNote = p.variants.length > 1 ? (v > 0 ? `Best value — ${inr((x.price / parseFloat(x.size)) * 100)} per 100` : x.size) : "";
+  const unit = x.size.replace(/[\d.\s]/g, "");
+  const sizeNote = p.variants.length > 1 ? `${inr((x.price / parseFloat(x.size)) * 100)} per 100 ${unit}` : "";
 
   return (
     <>
       <div className="price-row" style={{ marginTop: 22 }}>
         <b>{inr(x.price)}</b>
-        {x.mrp > x.price && <><s>MRP {inr(x.mrp)}</s><span className="off">{pctOff(x)}% off</span></>}
-        <small>Inclusive of all taxes</small>
+        <span style={{ color: "var(--muted)", fontSize: 13 }}>{x.size}</span>
+        <small>MRP · inclusive of all taxes</small>
       </div>
+      {p.forWhom && <div className="for-whom"><Moon /><span>{p.forWhom}</span></div>}
 
       {p.variants.length > 1 && <>
         <div className="opt-label">Size <span>{sizeNote}</span></div>
@@ -80,8 +82,8 @@ export default function BuyBox({ p, pair }: { p: Product; pair?: Product }) {
       <button className="btn btn--ghost btn--block buy-now" onClick={() => { add(p.id, v, q, { open: false }); router.push("/checkout"); }}>Buy it now</button>
 
       <div className="offers">
-        <div><Tag /><span>Use <b>EKAFIRST10</b> for 10% off your first order</span></div>
-        <div><Tag /><span>Free express shipping above ₹{CONFIG.freeShippingAt} · <b>2 free miniatures</b> above {inr(CONFIG.giftAt)}</span></div>
+        <div><Truck /><span>Complimentary shipping above ₹{CONFIG.freeShippingAt} · Cash on Delivery available</span></div>
+        <div><Gift /><span>Two ritual miniatures with orders above {inr(CONFIG.giftAt)} · gift note on request</span></div>
       </div>
 
       <PinChecker />
@@ -90,7 +92,7 @@ export default function BuyBox({ p, pair }: { p: Product; pair?: Product }) {
         <div><Truck />Free shipping<br />above ₹{CONFIG.freeShippingAt}</div>
         <div><Cash />Cash on<br />Delivery</div>
         <div><Return />Easy 7-day<br />returns</div>
-        <div><Shield />Pregnancy &amp;<br />baby-safe</div>
+        {CLAIMS.dermatologistTested ? <div><Shield />Dermatologist-<br />tested</div> : <div><List />Fully disclosed<br />ingredients</div>}
       </div>
 
       {pair && (

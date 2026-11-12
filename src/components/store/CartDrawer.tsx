@@ -10,7 +10,7 @@ import ProductArt from "../ProductArt";
 import { Close, Gift } from "../Icons";
 import { useStore } from "./StoreProvider";
 
-const UPSELLS = ["bloom-belly-oil", "malish-baby-oil", "nurture-nursing-balm", "soothe-baby-balm", "velvet-belly-butter", "baby-ubtan"];
+const UPSELLS = ["nabhi-ritual-oil", "bloom-belly-oil", "malish-baby-oil", "nurture-nursing-balm", "soothe-baby-balm", "velvet-belly-butter", "baby-ubtan"];
 
 export function ShippingMeter({ t }: { t: Totals }) {
   const max = CONFIG.giftAt * 1.08;
@@ -19,16 +19,16 @@ export function ShippingMeter({ t }: { t: Totals }) {
   return (
     <div className="ship-meter">
       <p>
-        {t.after < CONFIG.freeShippingAt ? <>You&apos;re <b>{inr(CONFIG.freeShippingAt - t.after)}</b> away from <b>free express shipping</b></>
-          : t.after < CONFIG.giftAt ? <>Free shipping unlocked ✓ Add <b>{inr(CONFIG.giftAt - t.after)}</b> for <b>2 free miniatures</b></>
-          : <><b>Free shipping + 2 complimentary miniatures</b> unlocked ✓</>}
+        {t.after < CONFIG.freeShippingAt ? <><b>{inr(CONFIG.freeShippingAt - t.after)}</b> more for <b>complimentary shipping</b></>
+          : t.after < CONFIG.giftAt ? <>Complimentary shipping ✓ · <b>{inr(CONFIG.giftAt - t.after)}</b> more for <b>two ritual miniatures</b></>
+          : <><b>Complimentary shipping & two ritual miniatures</b> ✓</>}
       </p>
       <div className="meter">
         <div className="meter__fill" style={{ width: `${w}%` }} />
         <span className={`meter__tick${t.after >= CONFIG.freeShippingAt ? " hit" : ""}`} style={{ left: `${a}%` }} />
         <span className={`meter__tick${t.gift ? " hit" : ""}`} style={{ left: `${b}%` }} />
       </div>
-      <div className="meter__labels"><span>Bag</span><span style={{ marginLeft: "auto", marginRight: "9%" }}>Free shipping ₹{CONFIG.freeShippingAt}</span><span>Gift {inr(CONFIG.giftAt)}</span></div>
+      <div className="meter__labels"><span>Bag</span><span style={{ marginLeft: "auto", marginRight: "9%" }}>Shipping ₹{CONFIG.freeShippingAt}</span><span>Gift {inr(CONFIG.giftAt)}</span></div>
     </div>
   );
 }
@@ -37,18 +37,21 @@ export function CouponForm({ compact }: { compact?: boolean }) {
   const { coupon, applyCoupon, totals } = useStore();
   const t = totals();
   const [code, setCode] = useState(coupon && !t.couponErr ? coupon : "");
+  const [open, setOpen] = useState(!!coupon);
+  // Premium positioning: the code field stays tucked away unless the shopper has one
+  if (!open && !coupon) return <button type="button" className="code-toggle" onClick={() => setOpen(true)}>Have a gift or welcome code?</button>;
   return (
     <>
       <form className="coupon" onSubmit={(e) => { e.preventDefault(); applyCoupon(code || null); }}>
-        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Coupon code" aria-label="Coupon code" />
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Welcome or gift code" aria-label="Welcome or gift code" />
         <button className="btn btn--ghost btn--sm">Apply</button>
       </form>
-      {coupon ? (
+      {coupon && (
         <p className={`coupon-msg ${t.couponErr ? "err" : "ok"}`}>
-          {t.couponErr || <>{coupon} applied{compact ? " ✓" : <> — {CONFIG.coupons[coupon].label}. </>}</>}
+          {t.couponErr || <>{CONFIG.coupons[coupon].label}{compact ? " ✓" : " — applied."}</>}
           {" "}<button type="button" onClick={() => { applyCoupon(null); setCode(""); }} style={{ textDecoration: "underline" }}>Remove</button>
         </p>
-      ) : !compact && <p className="coupon-msg" style={{ color: "var(--muted)" }}>First order? Try <b>EKAFIRST10</b></p>}
+      )}
     </>
   );
 }
@@ -94,7 +97,7 @@ export default function CartDrawer() {
                         <button className="remove" onClick={() => remove(i)}>Remove</button>
                       </div>
                     </div>
-                    <div className="price">{inr(v.price * l.q)}{v.mrp > v.price && <s>{inr(v.mrp * l.q)}</s>}</div>
+                    <div className="price">{inr(v.price * l.q)}</div>
                   </div>
                 );
               })}
@@ -121,9 +124,8 @@ export default function CartDrawer() {
             <CouponForm />
             <div className="totals">
               <div><span>Subtotal</span><span>{inr(t.sub)}</span></div>
-              {t.mrp > t.sub && <div className="save"><span>You save on MRP</span><span>−{inr(t.mrp - t.sub)}</span></div>}
-              {t.disc > 0 && <div className="save"><span>Coupon</span><span>−{inr(t.disc)}</span></div>}
-              <div><span>Shipping</span><span>{t.ship ? inr(t.ship) : "Free"}</span></div>
+              {t.disc > 0 && <div><span>Code</span><span>−{inr(t.disc)}</span></div>}
+              <div><span>Shipping</span><span>{t.ship ? inr(t.ship) : "Complimentary"}</span></div>
               <div className="grand"><span>Total <small style={{ fontWeight: 300, color: "var(--muted)" }}>incl. GST</small></span><span>{inr(t.total)}</span></div>
             </div>
             <Link className="btn btn--block" href="/checkout" onClick={close}>Checkout securely · {inr(t.total)}</Link>
