@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eka Organics — Ayurvedic Rituals for Mother &amp; Baby</title>
+  <meta name="description" content="Eka Organics: certified-organic, pregnancy-safe belly oils, postpartum rituals and gentle baby care, rooted in Ayurveda. Free Pan-India shipping over ₹999. COD available." />
+  <meta name="theme-color" content="#3D2F26" />
+  <link rel="icon" href="assets/img/icon.png" />
+  <meta property="og:title" content="Eka Organics — Ayurvedic Rituals for Mother & Baby" />
+  <meta property="og:description" content="Pregnancy-safe belly oils, postpartum rituals and gentle baby care, rooted in Ayurveda." />
+  <meta property="og:image" content="assets/img/brand-taupe.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- Announcement bar -->
+  <div class="announce" role="region" aria-label="Offers">
+    <div class="announce__track" id="announceTrack">
+      <span>Complimentary Pan-India shipping on orders above ₹999</span>
+      <span>Cash on Delivery available · Easy 7-day returns</span>
+      <span>First order? Use <b>EKAFIRST10</b> for 10% off</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <div class="header__left">
+        <button class="icon-btn menu-toggle" id="menuOpen" aria-label="Open menu">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+        </button>
+        <nav class="nav" aria-label="Primary">
+          <a href="#/shop" data-nav="shop">Shop All</a>
+          <a href="#/shop?stage=pregnancy" data-nav="pregnancy">Pregnancy</a>
+          <a href="#/shop?stage=postpartum" data-nav="postpartum">Postpartum</a>
+          <a href="#/shop?stage=baby" data-nav="baby">Baby</a>
+          <a href="#/shop?stage=sets" data-nav="sets">Gift Sets</a>
+        </nav>
+      </div>
+      <a href="#/" class="logo" aria-label="Eka Organics home">
+        <img src="assets/img/wordmark-dark.png" alt="eka organics" width="591" height="387" />
+      </a>
+      <div class="header__right">
+        <a class="nav-link hide-md" href="#/story">Our Story</a>
+        <button class="nav-link hide-md quiz-link" data-open-quiz>Find Your Ritual</button>
+        <button class="icon-btn" id="searchOpen" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+        </button>
+        <button class="icon-btn" id="cartOpen" aria-label="Open bag">
+          <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+          <span class="badge" id="cartCount" hidden>0</span>
+        </button>
+      </div>
+    </div>
+    <div class="search" id="searchBar" hidden>
+      <div class="search__inner">
+        <input id="searchInput" type="search" placeholder="Search belly oil, baby massage, ubtan…" aria-label="Search products" />
+        <button class="icon-btn" id="searchClose" aria-label="Close search"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="search__results" id="searchResults"></div>
+    </div>
+  </header>
+
+  <!-- Mobile menu -->
+  <aside class="drawer drawer--left" id="menuDrawer" aria-hidden="true">
+    <div class="drawer__head">
+      <img src="assets/img/wordmark-dark.png" alt="eka organics" class="drawer__logo" />
+      <button class="icon-btn" data-close aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <nav class="mnav">
+      <a href="#/shop">Shop All</a>
+      <a href="#/shop?stage=pregnancy">Pregnancy</a>
+      <a href="#/shop?stage=postpartum">Postpartum</a>
+      <a href="#/shop?stage=baby">Baby &amp; Little Ones</a>
+      <a href="#/shop?stage=sets">Gift Sets</a>
+      <a href="#/story">Our Story</a>
+      <button data-open-quiz>Find Your Ritual →</button>
+    </nav>
+    <div class="mnav__foot">
+      <p>Need help choosing?</p>
+      <a class="btn btn--ghost btn--sm" data-whatsapp target="_blank" rel="noopener">Chat on WhatsApp</a>
+    </div>
+  </aside>
+
+  <!-- Cart drawer -->
+  <aside class="drawer drawer--right" id="cartDrawer" aria-hidden="true" aria-label="Your bag">
+    <div class="drawer__head">
+      <h3 class="drawer__title">Your Bag <span id="cartHeadCount"></span></h3>
+      <button class="icon-btn" data-close aria-label="Close bag"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="drawer__body" id="cartBody"></div>
+    <div class="drawer__foot" id="cartFoot"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main id="main" tabindex="-1"></main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__news">
+      <div>
+        <p class="eyebrow eyebrow--light">— The Eka Circle —</p>
+        <h3>Gentle rituals, delivered to your inbox</h3>
+        <p>Trimester guides, postpartum care from Ayurvedic tradition, and 10% off your first order.</p>
+      </div>
+      <form class="news-form" data-news>
+        <input type="email" required placeholder="Your email address" aria-label="Email address" />
+        <button class="btn btn--light">Join</button>
+      </form>
+    </div>
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <img src="assets/img/wordmark-light.png" alt="eka organics" />
+        <p>Ayurvedic, organic care for the most tender chapters of life — pregnancy, motherhood and your little one's first years.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#/shop?stage=pregnancy">Pregnancy</a>
+        <a href="#/shop?stage=postpartum">Postpartum</a>
+        <a href="#/shop?stage=baby">Baby &amp; Little Ones</a>
+        <a href="#/shop?stage=sets">Gift Sets</a>
+      </div>
+      <div>
+        <h4>Eka</h4>
+        <a href="#/story">Our Story</a>
+        <a href="#/story">Ingredients &amp; Sourcing</a>
+        <button data-open-quiz>Find Your Ritual</button>
+        <a href="#/faq">FAQs</a>
+      </div>
+      <div>
+        <h4>Care</h4>
+        <a href="#/faq">Shipping &amp; Delivery</a>
+        <a href="#/faq">Returns &amp; Refunds</a>
+        <a data-whatsapp target="_blank" rel="noopener">WhatsApp Support</a>
+        <a data-email>Email Us</a>
+      </div>
+    </div>
+    <div class="footer__base">
+      <span>© <span id="year"></span> Eka Organics · estd 2018 · Made with care in India</span>
+      <span class="pay-icons" aria-label="Accepted payments">UPI · Cards · NetBanking · Wallets · COD</span>
+    </div>
+  </footer>
+
+  <!-- WhatsApp float -->
+  <a class="wa-float" data-whatsapp target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+    <svg viewBox="0 0 32 32"><path d="M16 3a13 13 0 0 0-11.3 19.4L3 29l6.8-1.8A13 13 0 1 0 16 3Zm0 23.6c-2 0-4-.6-5.7-1.6l-.4-.2-4 1 1.1-3.9-.3-.4A10.6 10.6 0 1 1 16 26.6Zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3 14.4 14.4 0 0 0 5.5 4.9c2 .9 2.9 1 3.9.8a3.4 3.4 0 0 0 2.2-1.6 2.8 2.8 0 0 0 .2-1.6c-.1-.1-.3-.2-.6-.4Z"/></svg>
+  </a>
+
+  <!-- Modal root (quiz, quick view, newsletter) -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal__panel" id="modalPanel"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/art.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

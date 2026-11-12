@@ -1,0 +1,42 @@
+import Link from "next/link";
+import { STAGES, type Product } from "@/lib/data";
+import { inr, pctOff, stars } from "@/lib/format";
+import ProductArt from "./ProductArt";
+import { AddToBag, QuickViewButton } from "./store/Buttons";
+
+export function Rating({ p }: { p: Product }) {
+  // Only shown once the product has genuine reviews
+  if (!p.reviews) return null;
+  return <div className="rating"><span className="stars">{stars(p.rating)}</span>{p.rating} ({p.reviews})</div>;
+}
+
+export default function ProductCard({ p }: { p: Product }) {
+  const v = p.variants[0];
+  const off = pctOff(v);
+  return (
+    <article className="card rv">
+      <Link className="card__media" href={`/products/${p.id}`} aria-label={p.name}>
+        <ProductArt p={p} />
+        <div className="card__tags">
+          {p.tags.includes("bestseller") && <span className="tag tag--dark">Bestseller</span>}
+          {p.tags.includes("new") && <span className="tag">New</span>}
+          {off >= 12 && <span className="tag tag--off">{off}% off</span>}
+        </div>
+      </Link>
+      <div className="card__quick">
+        <AddToBag id={p.id}>Add to bag · {inr(v.price)}</AddToBag>
+        <QuickViewButton id={p.id} />
+      </div>
+      <div className="card__body">
+        <span className="card__stage">{STAGES[p.stage].name}</span>
+        <Link href={`/products/${p.id}`} className="card__name">{p.name}</Link>
+        <p className="card__sub">{p.sub}</p>
+        <div className="card__foot">
+          <span className="price">{inr(v.price)}{v.mrp > v.price && <><s>{inr(v.mrp)}</s><span className="off">{off}% off</span></>}</span>
+          <Rating p={p} />
+        </div>
+        <AddToBag id={p.id} className="btn btn--ghost card__mobile-add">Add to bag</AddToBag>
+      </div>
+    </article>
+  );
+}
