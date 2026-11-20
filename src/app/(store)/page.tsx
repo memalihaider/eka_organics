@@ -9,7 +9,7 @@ import { AddToBag, QuizButton } from "@/components/store/Buttons";
 import { Arrow, Drop, Leaf, List, Moon } from "@/components/Icons";
 
 const BESTSELLERS = ["nabhi-ritual-oil", "bloom-belly-oil", "sutika-postpartum-oil", "malish-baby-oil", "nine-month-ritual", "velvet-belly-butter", "mama-hair-elixir", "first-malish-kit"];
-const STAGE_ART: Record<StageKey, string> = { midlife: "nabhi-ritual-oil", pregnancy: "bloom-belly-oil", postpartum: "sutika-postpartum-oil", baby: "malish-baby-oil", sets: "welcome-home-hamper" };
+const STAGE_ART: Record<StageKey, string> = { midlife: "nabhi-ritual-oil", pregnancy: "bloom-belly-oil", postpartum: "sutika-postpartum-oil", baby: "malish-baby-oil", body: "nabhi-kund-oil", sets: "welcome-home-hamper" };
 
 const PILLARS = [
   { icon: Leaf, title: <>Traditional <em>inspiration</em></>, text: "Rituals drawn from Ayurveda — nabhi abhyanga, malish, Sutika care — practised by Indian women for generations." },

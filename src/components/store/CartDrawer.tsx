@@ -3,14 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { CONFIG, PRODUCT_MAP } from "@/lib/data";
+import { CONFIG, PRODUCT_MAP, variantLabel } from "@/lib/data";
 import { inr } from "@/lib/format";
 import type { Totals } from "@/lib/pricing";
-import ProductArt from "../ProductArt";
+import ProductThumb from "../ProductThumb";
 import { Close, Gift } from "../Icons";
 import { useStore } from "./StoreProvider";
 
-const UPSELLS = ["nabhi-ritual-oil", "bloom-belly-oil", "malish-baby-oil", "nurture-nursing-balm", "soothe-baby-balm", "velvet-belly-butter", "baby-ubtan"];
+const UPSELLS = ["nabhi-kund-oil", "nabhi-ritual-oil", "bloom-belly-oil", "malish-baby-oil", "nurture-nursing-balm", "soothe-baby-balm", "velvet-belly-butter", "baby-ubtan"];
 
 export function ShippingMeter({ t }: { t: Totals }) {
   const max = CONFIG.giftAt * 1.08;
@@ -86,9 +86,10 @@ export default function CartDrawer() {
                 const p = PRODUCT_MAP[l.id], v = p.variants[l.v];
                 return (
                   <div className="line-item" key={`${l.id}-${l.v}`}>
-                    <Link className="thumb" href={`/products/${p.id}`} onClick={close}><ProductArt p={p} /></Link>
+                    <Link className="thumb" href={`/products/${p.id}`} onClick={close}><ProductThumb p={p} sizes="72px" /></Link>
                     <div>
-                      <h4>{p.name}</h4><div className="meta">{v.size}</div>
+                      <h4>{p.name}</h4>
+                      <div className="meta">{variantLabel(v)}{v.sku ? ` · ${v.sku}` : ""}</div>
                       <div>
                         <span className="qty">
                           <button onClick={() => setQty(i, l.q - 1)} aria-label="Decrease">−</button><span>{l.q}</span>
@@ -108,8 +109,8 @@ export default function CartDrawer() {
                   <div className="upsell__row">
                     {ups.map((id) => { const p = PRODUCT_MAP[id]; return (
                       <div className="upsell__card" key={id}>
-                        <Link className="thumb" href={`/products/${id}`} onClick={close}><ProductArt p={p} /></Link>
-                        <b>{p.name}</b><small>{inr(p.variants[0].price)}</small><br />
+                        <Link className="thumb" href={`/products/${id}`} onClick={close}><ProductThumb p={p} sizes="72px" /></Link>
+                        <b>{p.name}</b><small>{p.variants[0].price > 0 ? inr(p.variants[0].price) : "View"}</small><br />
                         <button onClick={() => add(id)}>+ Add</button>
                       </div>
                     ); })}

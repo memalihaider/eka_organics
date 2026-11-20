@@ -25,7 +25,9 @@ export default function Footer() {
           <div>
             <h4>Shop</h4>
             <Link href="/products/nabhi-ritual-oil">Nabhi Ritual Oil</Link>
+            <Link href="/products/nabhi-kund-oil">Nabhi Kund Oil</Link>
             <Link href="/shop?stage=midlife">Women 40+</Link>
+            <Link href="/shop?stage=body">Body Care</Link>
             <Link href="/shop?stage=pregnancy">Pregnancy</Link>
             <Link href="/shop?stage=postpartum">Postpartum</Link>
             <Link href="/shop?stage=baby">Baby &amp; Little Ones</Link>

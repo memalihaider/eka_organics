@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { PRODUCT_MAP, STAGES } from "@/lib/data";
+import { PRODUCT_MAP, STAGES, isPurchasable, variantLabel } from "@/lib/data";
 import { inr } from "@/lib/format";
 import ProductArt from "../ProductArt";
+import ProductThumb from "../ProductThumb";
 import { Close } from "../Icons";
 import { storage, useStore } from "./StoreProvider";
 
@@ -86,24 +87,31 @@ function QuickView({ id }: { id: string }) {
   const [sel, setSel] = useState(0);
   const p = PRODUCT_MAP[id]; if (!p) return null;
   const v = p.variants[sel];
+  const canBuy = isPurchasable(v);
   return (
     <div className="qv">
-      <div className="qv__media"><ProductArt p={p} /></div>
+      <div className="qv__media"><ProductThumb p={p} sizes="420px" /></div>
       <div className="qv__info">
         <span className="card__stage">{STAGES[p.stage].name}</span>
         <h3>{p.name}</h3>
         <p style={{ color: "var(--muted)" }}>{p.sub}</p>
         <div style={{ display: "flex", gap: 10, alignItems: "baseline", margin: "18px 0" }}>
-          <b style={{ fontFamily: "var(--serif)", fontSize: 30, fontWeight: 500 }}>{inr(v.price)}</b>
-          <span style={{ color: "var(--muted)", fontSize: 13 }}>{v.size} · MRP incl. of all taxes</span>
+          <b style={{ fontFamily: "var(--serif)", fontSize: 30, fontWeight: 500 }}>{v.price > 0 ? inr(v.price) : "Price soon"}</b>
+          <span style={{ color: "var(--muted)", fontSize: 13 }}>{variantLabel(v)}{v.sku ? ` · ${v.sku}` : ""}{v.price > 0 ? " · MRP incl. of all taxes" : ""}</span>
         </div>
         <ul style={{ paddingLeft: 18, color: "var(--muted)", fontSize: 14, margin: "0 0 24px" }}>{p.benefits.slice(0, 3).map((b) => <li key={b}>{b}</li>)}</ul>
         {p.variants.length > 1 && (
-          <div className="sizes" style={{ marginBottom: 16 }}>
-            {p.variants.map((x, i) => <button key={x.size} className={`size${i === sel ? " on" : ""}`} onClick={() => setSel(i)}>{x.size}<small>{inr(x.price)}</small></button>)}
+          <div className="sizes sizes--packs" style={{ marginBottom: 16 }}>
+            {p.variants.map((x, i) => (
+              <button key={x.sku ?? x.size} className={`size${i === sel ? " on" : ""}`} onClick={() => setSel(i)} disabled={x.stock === 0}>
+                {x.name ?? x.size}<small>{x.price > 0 ? inr(x.price) : x.size}</small>
+              </button>
+            ))}
           </div>
         )}
-        <button className="btn btn--block" onClick={() => add(id, sel)}>Add to bag</button>
+        {canBuy
+          ? <button className="btn btn--block" onClick={() => add(id, sel)}>Add to bag</button>
+          : <Link className="btn btn--block" href={`/products/${p.id}`} onClick={() => openModal(null)}>View full details</Link>}
         <Link className="link-u" href={`/products/${p.id}`} onClick={() => openModal(null)}>View full details</Link>
       </div>
     </div>

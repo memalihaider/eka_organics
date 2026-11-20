@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { PRODUCT_MAP } from "@/lib/data";
+import { PRODUCT_MAP, isPurchasable } from "@/lib/data";
 import { computeTotals, MAX_QTY, sanitizeCart, type CartLine, type PayMethod, type Totals } from "@/lib/pricing";
 
 export type ModalState = { kind: "quiz" } | { kind: "quickview"; id: string } | { kind: "welcome" } | null;
@@ -67,14 +67,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const add = useCallback((id: string, v = 0, q = 1, opts: { open?: boolean } = {}) => {
-    if (!PRODUCT_MAP[id]?.variants[v]) return;
+    const p = PRODUCT_MAP[id];
+    const variant = p?.variants[v];
+    if (!p || p.visible === false || !variant || !isPurchasable(variant)) return;
+    const cap = variant.stock !== undefined ? Math.min(MAX_QTY, variant.stock) : MAX_QTY;
     setCart((c) => {
       const i = c.findIndex((l) => l.id === id && l.v === v);
-      if (i === -1) return [...c, { id, v, q: Math.min(MAX_QTY, q) }];
-      const next = [...c]; next[i] = { ...next[i], q: Math.min(MAX_QTY, next[i].q + q) }; return next;
+      if (i === -1) return [...c, { id, v, q: Math.min(cap, q) }];
+      const next = [...c]; next[i] = { ...next[i], q: Math.min(cap, next[i].q + q) }; return next;
     });
     setBump((b) => b + 1);
-    if (opts.open === false) showToast(`${PRODUCT_MAP[id].name} added to your bag`, { label: "View bag", fn: () => setDrawer("cart") });
+    if (opts.open === false) showToast(`${p.name} added to your bag`, { label: "View bag", fn: () => setDrawer("cart") });
     else { setModal(null); setDrawer("cart"); }
   }, [showToast]);
 
@@ -82,7 +85,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ready, cart, coupon, drawer, modal, toast, bump,
     totals: (pay) => computeTotals(cart, coupon, pay),
     add,
-    setQty: (i, q) => setCart((c) => (q <= 0 ? c.filter((_, j) => j !== i) : c.map((l, j) => (j === i ? { ...l, q: Math.min(MAX_QTY, q) } : l)))),
+    setQty: (i, q) => setCart((c) => {
+      if (q <= 0) return c.filter((_, j) => j !== i);
+      return c.map((l, j) => {
+        if (j !== i) return l;
+        const stock = PRODUCT_MAP[l.id]?.variants[l.v]?.stock;
+        const cap = stock !== undefined ? Math.min(MAX_QTY, stock) : MAX_QTY;
+        return { ...l, q: Math.min(cap, q) };
+      });
+    }),
     remove: (i) => setCart((c) => c.filter((_, j) => j !== i)),
     clear: () => { setCart([]); setCoupon(null); },
     applyCoupon: (code) => setCoupon(code ? code.trim().toUpperCase() : null),

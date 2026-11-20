@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { CONFIG, PRODUCT_MAP } from "@/lib/data";
+import { CONFIG, PRODUCT_MAP, variantLabel } from "@/lib/data";
 import { inr } from "@/lib/format";
 import { checkPin, stateFor, STATES } from "@/lib/pincode";
 import type { PayMethod } from "@/lib/pricing";
-import ProductArt from "@/components/ProductArt";
+import ProductThumb from "@/components/ProductThumb";
 import { Gift, Leaf, Lock, Return, Truck } from "@/components/Icons";
 import { CouponForm } from "@/components/store/CartDrawer";
 import { storage, useStore } from "@/components/store/StoreProvider";
@@ -172,7 +172,7 @@ export default function CheckoutForm() {
         <h3 style={{ fontSize: 28, marginBottom: 22 }}>Order summary</h3>
         <div className="co-items">
           {cart.map((l) => { const p = PRODUCT_MAP[l.id], v = p.variants[l.v]; return (
-            <div className="co-item" key={`${l.id}-${l.v}`}><span className="thumb"><ProductArt p={p} /><i>{l.q}</i></span><span><b>{p.name}</b><small>{v.size}</small></span><span className="p">{inr(v.price * l.q)}</span></div>
+            <div className="co-item" key={`${l.id}-${l.v}`}><span className="thumb"><ProductThumb p={p} sizes="64px" /><i>{l.q}</i></span><span><b>{p.name}</b><small>{variantLabel(v)}{v.sku ? ` · ${v.sku}` : ""}</small></span><span className="p">{inr(v.price * l.q)}</span></div>
           ); })}
           {t.gift && <div className="co-item"><span className="thumb" style={{ display: "grid", placeItems: "center", background: "var(--cream)" }}><Gift width={28} style={{ fill: "none", stroke: "var(--taupe)", strokeWidth: 1.3 }} /></span><span><b>2 Ayurvedic miniatures</b><small>Complimentary gift</small></span><span className="p">Free</span></div>}
         </div>

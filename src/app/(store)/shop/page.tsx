@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PRODUCTS, STAGES, isStage, type StageKey } from "@/lib/data";
+import { STAGES, catalogProducts, isStage, type StageKey } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import { TrustBar } from "@/components/Sections";
 import SortSelect, { type SortKey } from "./SortSelect";
@@ -10,7 +10,7 @@ type Search = Promise<{ stage?: string; sort?: string }>;
 export async function generateMetadata({ searchParams }: { searchParams: Search }): Promise<Metadata> {
   const { stage } = await searchParams;
   return isStage(stage)
-    ? { title: STAGES[stage].name, description: `${STAGES[stage].name} — ${STAGES[stage].line}. Ayurvedic, organic care from Eka Organics.` }
+    ? { title: STAGES[stage].name, description: `${STAGES[stage].name} — ${STAGES[stage].line}. Care from Eka Organics.` }
     : { title: "Shop All Rituals" };
 }
 
@@ -20,7 +20,7 @@ export default async function Shop({ searchParams }: { searchParams: Search }) {
   const sort = (["featured", "best", "low", "high"].includes(sp.sort ?? "") ? sp.sort : "featured") as SortKey;
   const s = stage ? STAGES[stage] : null;
 
-  let list = PRODUCTS.filter((p) => !stage || p.stage === stage);
+  let list = catalogProducts().filter((p) => !stage || p.stage === stage);
   if (sort === "low") list = [...list].sort((a, b) => a.variants[0].price - b.variants[0].price);
   if (sort === "high") list = [...list].sort((a, b) => b.variants[0].price - a.variants[0].price);
   if (sort === "best") list = [...list].sort((a, b) => +b.tags.includes("bestseller") - +a.tags.includes("bestseller"));

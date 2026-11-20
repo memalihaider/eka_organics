@@ -7,10 +7,23 @@
    and ASCI code).
    ========================================================================= */
 
-export type StageKey = "midlife" | "pregnancy" | "postpartum" | "baby" | "sets";
+export type StageKey = "midlife" | "pregnancy" | "postpartum" | "baby" | "body" | "sets";
 export type ArtType = "dropper" | "pump" | "bottle" | "jar" | "tin" | "tube" | "box";
 
-export interface Variant { size: string; price: number; mrp: number }
+export interface Variant {
+  size: string;
+  /** Pack name shown in selectors / cart, e.g. "Single Pack" */
+  name?: string;
+  qtyBottles?: number;
+  volumeMl?: number;
+  sku?: string;
+  price: number;
+  mrp: number;
+  /** Static stock count. Omit = unlimited (legacy products). 0 = out of stock. */
+  stock?: number;
+  /** Optional pack-specific gallery image path */
+  image?: string;
+}
 export interface Botanical { name: string; origin: string; note: string }
 export interface Product {
   id: string;
@@ -39,7 +52,24 @@ export interface Product {
   ritual: string;
   inci: string;
   safety: string;
+  /** Product / manufacturer brand. Defaults to Eka Organics when omitted. */
+  brand?: string;
+  /** Hide from listings when false. Defaults to true. */
+  visible?: boolean;
+  /** Real product photos. When set, gallery uses these instead of ProductArt. */
+  images?: { src: string; alt: string }[];
+  overview?: string;
+  features?: string[];
+  specs?: { label: string; value: string }[];
+  /** Remaining ingredients not yet verified by the manufacturer (names only). */
+  ingredientsPending?: string[];
+  seo?: { title: string; description: string; keywords?: string };
 }
+
+export const STORE_BRAND = "Eka Organics";
+export const productBrand = (p: Product) => p.brand ?? STORE_BRAND;
+export const isPurchasable = (v: Variant) => v.price > 0 && (v.stock === undefined || v.stock > 0);
+export const variantLabel = (v: Variant) => (v.name ? `${v.name} · ${v.size}` : v.size);
 
 export interface Coupon { type: "pct" | "flat" | "freeship"; value: number; min?: number; label: string }
 
@@ -90,6 +120,7 @@ export const STAGES: Record<StageKey, { name: string; line: string; tone: string
   pregnancy: { name: "Pregnancy", line: "For the nine-month bloom", tone: "#E7DACB" },
   postpartum: { name: "Postpartum", line: "The sacred forty days — Sutika", tone: "#D9C8B8" },
   baby: { name: "Baby & Little Ones", line: "Malish rituals for tender skin", tone: "#EFE6DB" },
+  body: { name: "Body Care", line: "Personal care massage oils", tone: "#F0E0D0" },
   sets: { name: "Gift Sets", line: "Curated rituals, beautifully boxed", tone: "#CDBBAA" },
 };
 export const isStage = (s: unknown): s is StageKey => typeof s === "string" && s in STAGES;
@@ -155,6 +186,89 @@ export const PRODUCTS: Product[] = [
       ["Will it stain clothes?", "The oil has a soft golden tone from turmeric. Use a small amount, allow it to absorb, and avoid immediate contact with light-coloured clothing."],
       ["What makes it suitable for women 40+?", "Its gentle, low-fragrance formula focuses on nourishing skin and a calming ritual, with no harsh herbs and no added camphor."],
       ["Why does the label say “no added camphor”?", "We never add camphor. Lavender and rosemary can contain tiny natural traces, so we say “no added camphor” rather than make a claim we cannot guarantee."],
+    ],
+  },
+  {
+    id: "nabhi-kund-oil",
+    name: "Nabhi Kund Oil",
+    sub: "Traditional Navel Massage Oil",
+    brand: "BIOTECH",
+    stage: "body",
+    tags: ["new"],
+    visible: true,
+    art: { type: "dropper", glass: "#C45A1A", cap: "#1A1A1A", tone: "#F3E6D8", short: "Nabhi Kund", kind: "Massage Oil", size: "30 ml", collar: "#C9A227" },
+    // VERIFY — set final MRP for each pack before enabling purchase (price 0 keeps ATC disabled)
+    variants: [
+      { name: "Single Pack", size: "30 ml", qtyBottles: 1, volumeMl: 30, sku: "NKO-30-1", price: 0, mrp: 0, stock: 50, image: "/img/products/nabhi-kund-oil/hero.png" },
+      { name: "Double Pack", size: "2 × 30 ml", qtyBottles: 2, volumeMl: 60, sku: "NKO-30-2", price: 0, mrp: 0, stock: 30, image: "/img/products/nabhi-kund-oil/bottle.png" },
+      { name: "Family Pack", size: "3 × 30 ml", qtyBottles: 3, volumeMl: 90, sku: "NKO-30-3", price: 0, mrp: 0, stock: 20, image: "/img/products/nabhi-kund-oil/pack.png" },
+    ],
+    rating: 0,
+    reviews: 0,
+    images: [
+      { src: "/img/products/nabhi-kund-oil/hero.png", alt: "Nabhi Kund Oil 30 ml amber glass dropper bottle with BIOTECH packaging" },
+      { src: "/img/products/nabhi-kund-oil/bottle.png", alt: "Nabhi Kund Oil bottle-only studio shot" },
+      { src: "/img/products/nabhi-kund-oil/pack.png", alt: "Nabhi Kund Oil bottle with orange and gold packaging carton" },
+    ],
+    seo: {
+      title: "Nabhi Kund Oil 30ml | Traditional Navel Massage Oil",
+      description: "Explore Nabhi Kund Oil, a traditional oil-based navel massage product featuring a blend marketed as 19 natural ingredients. Available in convenient 30ml packaging.",
+      keywords: "Nabhi Kund Oil, navel massage oil, BIOTECH, traditional nabhi oil, 30ml",
+    },
+    overview: "Nabhi Kund Oil is an oil-based formulation designed for an external navel massage routine. It is intended for topical use on clean, dry skin around the navel as part of a simple personal-care ritual — not for internal use or any medical condition.",
+    features: [
+      "Blend marketed as 19 natural ingredients",
+      "Traditional oil-based formulation for external navel massage",
+      "Convenient dropper application",
+      "Compact 30 ml amber glass packaging",
+      "Simple external-use routine",
+    ],
+    concerns: ["Navel massage ritual", "External body care", "Traditional oil blend"],
+    benefits: [
+      "Supports a simple external navel massage routine",
+      "Blend marketed as 19 natural ingredients",
+      "Dropper bottle for measured application",
+      "Compact 30 ml amber glass with gold-coloured collar",
+    ],
+    forWhom: "For adults seeking a traditional oil-based navel massage routine for external use only.",
+    packaging: "30 ml amber glass dropper bottle with a gold-coloured collar and black dropper, presented in orange and yellow BIOTECH packaging.",
+    specs: [
+      { label: "Brand", value: "BIOTECH – Care with Innovation" },
+      { label: "Product name", value: "Nabhi Kund Oil" },
+      { label: "Category", value: "Personal Care / Body Massage Oil" },
+      { label: "Net volume", value: "30 ml per bottle" },
+      { label: "Form", value: "External-use oil" },
+      { label: "Packaging", value: "Amber glass dropper bottle with gold-coloured collar and black dropper" },
+      { label: "Application type", value: "Topical navel massage" },
+    ],
+    hero: [
+      { name: "Castor Oil", origin: "Carrier", note: "Rich base oil for massage feel." },
+      { name: "Kalonji Oil", origin: "Seed oil", note: "Traditional botanical oil in the blend." },
+      { name: "Coconut Oil", origin: "Carrier", note: "Familiar conditioning oil." },
+      { name: "Olive Oil", origin: "Carrier", note: "Softening plant oil." },
+    ],
+    // Only the seven oils identified on the manufacturer brochure. Do not invent the rest.
+    ingredients: [
+      { name: "Castor oil", inci: "Ricinus Communis Seed Oil", role: "Rich massage base" },
+      { name: "Kalonji oil", inci: "Nigella Sativa Seed Oil", role: "Traditional botanical oil" },
+      { name: "Coconut oil", inci: "Cocos Nucifera Oil", role: "Conditioning carrier" },
+      { name: "Olive oil", inci: "Olea Europaea Fruit Oil", role: "Softening plant oil" },
+      { name: "Almond oil", inci: "Prunus Amygdalus Dulcis Oil", role: "Lightweight conditioning" },
+      { name: "Camphor oil", inci: "Cinnamomum Camphora Oil", role: "Aromatic botanical oil in the blend" },
+      { name: "Haritaki oil", inci: "Terminalia Chebula Fruit Oil", role: "Ayurvedic heritage botanical oil" },
+    ],
+    ingredientsPending: [], // VERIFY — add remaining manufacturer-verified ingredients here (brochure claims 19 total)
+    ritual: "Apply 4 drops to the navel. Gently massage approximately 0.5 inch around the navel. The manufacturer brochure suggests night-time application. For external use only.",
+    inci: "Ricinus Communis (Castor) Seed Oil, Nigella Sativa (Kalonji) Seed Oil, Cocos Nucifera (Coconut) Oil, Olea Europaea (Olive) Fruit Oil, Prunus Amygdalus Dulcis (Sweet Almond) Oil, Cinnamomum Camphora (Camphor) Oil, Terminalia Chebula (Haritaki) Fruit Oil. Full ingredient list: seven oils identified on the manufacturer brochure; remaining ingredients pending manufacturer verification.",
+    safety: "For external use only. Patch test on the inner arm 24 hours before first use. Avoid broken or irritated skin and contact with eyes. Contains almond (tree-nut) oil and camphor oil. Keep out of reach of children. Consult your doctor before use if pregnant, breastfeeding, or managing a medical or skin condition. Discontinue use if irritation occurs. This is a cosmetic / personal-care oil for topical massage — not a medicine. Application instructions and the complete ingredient list should be verified against the manufacturer’s current packaging.",
+    faq: [
+      ["What is Nabhi Kund Oil?", "Nabhi Kund Oil is a traditional oil-based product from BIOTECH, designed for an external navel massage routine. It is for topical use only."],
+      ["What is the bottle size?", "Each bottle is 30 ml. Packs are available as Single (1 bottle), Double (2 bottles) and Family (3 bottles)."],
+      ["How should it be applied?", "Apply 4 drops to the navel and gently massage about 0.5 inch around the navel. The manufacturer brochure suggests night-time application. Always follow the directions on your bottle."],
+      ["What ingredients are included?", "The manufacturer brochure identifies seven oils: castor, kalonji, coconut, olive, almond, camphor and haritaki. The blend is marketed as 19 natural ingredients; the remaining names will be listed here once the manufacturer supplies a verified complete list."],
+      ["Is it for external use?", "Yes. Nabhi Kund Oil is for external use only. Do not ingest."],
+      ["How should it be stored?", "Store in a cool, dry place away from direct sunlight, with the dropper closed. Follow any storage directions printed on the manufacturer packaging."],
+      ["What precautions should customers follow?", "Patch test before first use. Avoid eyes and broken skin. Contains almond and camphor oils. Keep away from children. Seek medical advice before use if pregnant, breastfeeding, or managing a medical or skin condition. This product is a personal-care oil for external massage only — not a medicine."],
     ],
   },
   {
@@ -367,10 +481,13 @@ export const PRODUCTS: Product[] = [
 
 export const PRODUCT_MAP: Record<string, Product> = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
 export const getProduct = (id: string): Product | undefined => PRODUCT_MAP[id];
+/** Products shown in shop / cards / search (respects `visible`). */
+export const catalogProducts = () => PRODUCTS.filter((p) => p.visible !== false);
 
 /** Complementary product shown as "Pairs beautifully with" on product pages. */
 export const PAIRS: Record<string, string> = {
   "nabhi-ritual-oil": "mama-hair-elixir",
+  "nabhi-kund-oil": "nabhi-ritual-oil",
   "bloom-belly-oil": "velvet-belly-butter",
   "velvet-belly-butter": "bloom-belly-oil",
   "sutika-postpartum-oil": "mama-hair-elixir",

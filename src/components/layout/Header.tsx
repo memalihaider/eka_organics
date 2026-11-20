@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { PRODUCTS, STAGES, whatsappUrl } from "@/lib/data";
+import { STAGES, catalogProducts, whatsappUrl } from "@/lib/data";
 import { inr } from "@/lib/format";
-import ProductArt from "../ProductArt";
+import ProductThumb from "../ProductThumb";
 import { Bag, Close, Menu, Search } from "../Icons";
 import { useStore } from "../store/StoreProvider";
 
@@ -16,6 +16,7 @@ const NAV = [
   { href: "/shop?stage=pregnancy", label: "Pregnancy" },
   { href: "/shop?stage=postpartum", label: "Postpartum" },
   { href: "/shop?stage=baby", label: "Baby" },
+  { href: "/shop?stage=body", label: "Body Care" },
   { href: "/shop?stage=sets", label: "Gift Sets" },
 ];
 
@@ -42,8 +43,8 @@ function SearchBar({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => ref.current?.focus(), []);
   const term = q.trim().toLowerCase();
-  const hits = term.length < 2 ? [] : PRODUCTS.filter((p) =>
-    [p.name, p.sub, STAGES[p.stage].name, ...p.concerns, ...p.hero.map((h) => h.name)].join(" ").toLowerCase().includes(term)).slice(0, 5);
+  const hits = term.length < 2 ? [] : catalogProducts().filter((p) =>
+    [p.name, p.sub, p.brand, STAGES[p.stage].name, ...p.concerns, ...p.hero.map((h) => h.name)].join(" ").toLowerCase().includes(term)).slice(0, 5);
   return (
     <div className="search">
       <div className="search__inner">
@@ -54,10 +55,10 @@ function SearchBar({ onClose }: { onClose: () => void }) {
         <div className="search__results">
           {hits.length ? hits.map((p) => (
             <Link key={p.id} className="sr-item" href={`/products/${p.id}`} onClick={onClose}>
-              <span className="thumb"><ProductArt p={p} /></span>
-              <span><b>{p.name}</b><small>{p.sub} · {inr(p.variants[0].price)}</small></span>
+              <span className="thumb"><ProductThumb p={p} sizes="56px" /></span>
+              <span><b>{p.name}</b><small>{p.sub} · {p.variants[0].price > 0 ? inr(p.variants[0].price) : "View"}</small></span>
             </Link>
-          )) : <p style={{ color: "var(--muted)", padding: 8 }}>No matches — try “belly”, “baby”, or “postpartum”.</p>}
+          )) : <p style={{ color: "var(--muted)", padding: 8 }}>No matches — try “belly”, “baby”, or “nabhi”.</p>}
         </div>
       )}
     </div>
@@ -115,7 +116,7 @@ export default function Header() {
           <button className="icon-btn" onClick={() => openDrawer(null)} aria-label="Close menu"><Close /></button>
         </div>
         <nav className="mnav">
-          {[...NAV.slice(0, 4), { href: "/shop?stage=baby", label: "Baby & Little Ones" }, NAV[5], { href: "/story", label: "Our Story" }].map((n) => (
+          {[...NAV, { href: "/story", label: "Our Story" }].map((n) => (
             <Link key={n.label} href={n.href} onClick={() => openDrawer(null)}>{n.label}</Link>
           ))}
           <button onClick={() => openModal({ kind: "quiz" })}>Find Your Ritual →</button>
